@@ -25,12 +25,13 @@ import java.util.Map;
  */
 public class HttpServer {
 
-    private static final int PORT = 35000;
+    private static final int DEFAULT_PORT = 35000;
     private static final String RESOURCE_ROOT = "/public";
 
     public static void main(String[] args) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(PORT);
-        System.out.println("Ready to receive on port " + PORT + "...");
+        int port = resolvePort(args);
+        ServerSocket serverSocket = new ServerSocket(port);
+        System.out.println("Ready to receive on port " + port + "...");
 
         while (true) {
             try (Socket clientSocket = serverSocket.accept()) {
@@ -39,6 +40,25 @@ public class HttpServer {
                 System.out.println("Error atendiendo una solicitud: " + e.getMessage());
             }
         }
+    }
+    private static int resolvePort(String[] args) {
+    
+        if (args.length > 0) {
+            try {
+                return Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                System.out.println("Argumento de puerto inválido, usando valor por defecto " + DEFAULT_PORT);
+            }
+        }
+        String envPort = System.getenv("PORT");
+        if (envPort != null) {
+            try {
+                return Integer.parseInt(envPort);
+            } catch (NumberFormatException e) {
+                System.out.println("Variable de entorno PORT inválida, usando valor por defecto " + DEFAULT_PORT);
+            }
+        }
+        return DEFAULT_PORT;
     }
 
     private static void handleRequest(Socket clientSocket) throws IOException {

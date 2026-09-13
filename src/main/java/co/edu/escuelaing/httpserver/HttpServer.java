@@ -107,11 +107,10 @@ public class HttpServer {
             case "/square" -> handleSquare(rawOut, query);
             case "/time" -> handleTime(rawOut);
             case "/health" -> handleHealth(rawOut);
+            case "/slow" -> handleSlow(rawOut);
             default -> handleStaticResource(rawOut, path);
         }
     }
-
-    // ---------- Servicios dinámicos ----------
 
     private static void handleHello(OutputStream out, String query) throws IOException {
         Map<String, String> params = parseQuery(query);
@@ -145,8 +144,16 @@ public class HttpServer {
     private static void handleHealth(OutputStream out) throws IOException {
         sendJson(out, "{\"status\":\"ok\"}");
     }
+    private static void handleSlow(OutputStream out) throws IOException {
+        try{
+            Thread.sleep(5000);  
+        }catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+        }
+        sendJson(out, "{\"message\":\"Respuesta lenta completada\"}");
+    }
 
-    // ---------- Recursos estáticos ----------
+    // Recursos estáticos
 
     private static void handleStaticResource(OutputStream out, String path) throws IOException {
         if (path == null || path.equals("/")) {
@@ -172,7 +179,7 @@ public class HttpServer {
         }
     }
 
-    private static String contentTypeFor(String path) {
+    static String contentTypeFor(String path) {
         String lower = path.toLowerCase();
         if (lower.endsWith(".html")) return "text/html; charset=UTF-8";
         if (lower.endsWith(".js")) return "application/javascript; charset=UTF-8";
@@ -181,7 +188,7 @@ public class HttpServer {
         return "application/octet-stream";
     }
 
-    // ---------- Utilidades de respuesta ----------
+    //Utilidades de respuesta 
 
     private static void sendJson(OutputStream out, String json) throws IOException {
         sendBytes(out, 200, "OK", "application/json; charset=UTF-8",
@@ -205,7 +212,7 @@ public class HttpServer {
         out.flush();
     }
 
-    private static Map<String, String> parseQuery(String query) {
+    static Map<String, String> parseQuery(String query) {
         Map<String, String> params = new HashMap<>();
         if (query == null || query.isEmpty()) {
             return params;
@@ -219,7 +226,7 @@ public class HttpServer {
         return params;
     }
 
-    private static String escapeJson(String s) {
+    static String escapeJson(String s) {
         return s.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 }

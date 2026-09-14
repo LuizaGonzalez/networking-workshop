@@ -15,3 +15,37 @@ buildNumber.properties
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+# NetBeans
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# IntelliJ / otros IDEs
+.idea/
+*.iml
+.vscode/
+
+# Metadatos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Registros y archivos temporales
+*.log
+*.tmp
+*~
+
+# Archivos de entorno
+.env
+.env.local
+
+# Claves privadas y credenciales (NUNCA deben subirse)
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Configuración de nube local
+.aws/
